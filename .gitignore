@@ -4,3 +4,4 @@ __pycache__
 *.pyc
 lists/.tests.py.swp
 notes.txt
+.functional_tests.py.swp
