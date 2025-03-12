@@ -35,18 +35,25 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table=self.browser.find_element(By.ID,'id_list_table')
-        rows=table.find_elements(By.TAG_NAME,'tr')
-        self.assertTrue(
-                any(row.text == '1: go to the store' for row in rows), 
-                "New to-do item did not appear in table"
-        )
+        table = self.browser.find_element(By.ID,'id_list_table')
+        rows = table.find_elements(By.TAG_NAME, 'tr')
+
+        self.assertIn('1: go to the store', [row.text for row in rows])
 
         # The text box still exists, so she uses it again. 
         ## She enters, "grab apples from the fruit section"
-        self.fail('finish the test')
+        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        inputbox.send_keys('grab apples from the fruit section')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # The page updates again and shows both items on her list 
+        table = self.browser.find_element(By.ID, 'id_list_table')
+        rows = table.find_elements(By.TAG_NAME, 'tr')
+        self.assertIn('1: go to the store', [row.text for row in rows])
+        self.assertIn('2: grab apples from the fruit section', [row.text for row in rows])
+        self.fail('finish the test')
+
 
         # User wonders whether the site will remember her list. Then she sees that the site has generated a unique URL for her -- there is some explanatory text to that effect. 
 
