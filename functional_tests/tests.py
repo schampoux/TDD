@@ -4,6 +4,10 @@ from selenium.webdriver.common.keys import Keys
 import time
 from selenium.webdriver.common.by import By
 from django.test import LiveServerTestCase
+from selenium.common.exceptions import WebDriverException
+
+MAX_WAIT=10
+
 
 
 class NewVisitorTest(LiveServerTestCase):
@@ -35,28 +39,22 @@ class NewVisitorTest(LiveServerTestCase):
         # She hits enter, the page updates, and now the page lists 
         ## "1: Go to the store" as the first item in a to-do list 
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
-
-        table = self.browser.find_element(By.ID,'id_list_table')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-
-        self.assertIn('1: go to the store', [row.text for row in rows])
+        self.wait_for_row_in_list_table('1: go to the store')
 
         # The text box still exists, so she uses it again. 
         ## She enters, "grab apples from the fruit section"
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         inputbox.send_keys('grab apples from the fruit section')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
-        # The page updates again and shows both items on her list 
-        table = self.browser.find_element(By.ID, 'id_list_table')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-        self.assertIn('1: go to the store', [row.text for row in rows])
-        self.assertIn('2: grab apples from the fruit section', [row.text for row in rows])
+        # The page updates again and shows both items on her list
+        self.wait_for_row_in_list_table('2: grab apples from the fruit section')
+        self.wait_for_row_in_list_table('1: go to the store')
+
+        
         self.fail('finish the test')
 
-
+    
         # User wonders whether the site will remember her list. Then she sees that the site has generated a unique URL for her -- there is some explanatory text to that effect. 
 
         # she visits that URL - her to-do list is still there. 
@@ -64,5 +62,18 @@ class NewVisitorTest(LiveServerTestCase):
         # She closes the website. 
 
         browser.quit() 
+        
+    def wait_for_row_in_list_table(self, row_text):
+        start_time = time.time()
+        while True:
+                try:
+                    table = self.browser.find_element(By.ID, 'id_list_table')
+                    rows = table.find_elements(By.TAG_NAME, 'tr')
+                    self.assertIn(row_text, [row.text for row in rows])
+                    return
+                except (AssertionError, WebDriverException) as e:
+                    if time.time() - start_time > MAX_WAIT:
+                        raise e
+                    time.sleep(0.5)
 
 
