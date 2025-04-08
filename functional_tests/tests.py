@@ -33,23 +33,23 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
 
-        # She types "go to the store" into a text box
-        inputbox.send_keys("go to the store")
+        # She types "Buy peacock feathers" into a text box
+        inputbox.send_keys("Buy peacock feathers")
 
         # She hits enter, the page updates, and now the page lists
-        ## "1: Go to the store" as the first item in a to-do list
+        ## "1: Buy peacock feathers" as an item in a to-do list table
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table("1: go to the store")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # The text box still exists, so she uses it again.
-        ## She enters, "grab apples from the fruit section"
+        ## She enters, "Use peacock feathers to make a fly"
         inputbox = self.browser.find_element(By.ID, "id_new_item")
-        inputbox.send_keys("grab apples from the fruit section")
+        inputbox.send_keys("Use peacock feathers to make a fly")
         inputbox.send_keys(Keys.ENTER)
 
         # The page updates again and shows both items on her list
-        self.wait_for_row_in_list_table("2: grab apples from the fruit section")
-        self.wait_for_row_in_list_table("1: go to the store")
+        self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # satisfird, she goes back to sleep
 
@@ -57,9 +57,9 @@ class NewVisitorTest(LiveServerTestCase):
         # Edith starts a new to-do list
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
-        inputbox.send_keys("Ediths list item 1")
+        inputbox.send_keys("Buy peacock feathers")
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table("1: Ediths list item 1")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # She notices that her list has a unique URL
         edith_list_url = self.browser.current_url
@@ -73,14 +73,14 @@ class NewVisitorTest(LiveServerTestCase):
         # Francis visits the home page, There is no sign of Ediths list
         self.browser.get(self.live_server_url)
         page_text = self.browser.find_element(By.TAG_NAME, "body").text
-        self.assertNotIn("Ediths list item 1", page_text)
-        self.assertNotIn("grab apples from the fruit section", page_text)
+        self.assertNotIn("Buy peacock feathers", page_text)
+        self.assertNotIn("make a fly", page_text)
 
         # Francis starts a new list by entering a new item.
         inputbox = self.browser.find_element(By.ID, "id_new_item")
-        inputbox.send_keys("Francis item 1")
+        inputbox.send_keys("Buy milk")
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table("1. Francis item 1")
+        self.wait_for_row_in_list_table("1. Buy milk")
 
         # Francis gets his own unique URL
         francis_list_url = self.browser.current_url
@@ -89,8 +89,8 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Again, there is no trace of ediths list
         page_text = self.browser.find_element(By.TAG_NAME, "body").text
-        self.assertNotIn("Ediths list item 1", page_text)
-        self.assertIn("Francis item 1", page_text)
+        self.assertNotIn("Buy Peacock Feathers", page_text)
+        self.assertIn("Buy milk", page_text)
 
         # satisfied, she goes back to sleep
 
