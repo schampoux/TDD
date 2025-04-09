@@ -11,8 +11,9 @@ install()
 
 class ListViewTest(TestCase):
     def test_uses_list_template(self):
+
         # exercise
-        response = self.client.get(" ")
+        response = self.client.get("/lists/the-only-list-in-the-world/")
 
         # assert
         self.assertTemplateUsed(response, "list.html")
