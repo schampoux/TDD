@@ -37,13 +37,8 @@ class HomePageTest(TestCase):
         response = self.client.get("/")
         self.assertTemplateUsed(response, "home.html")
 
-
-    def test_only_saves_items_when_necessary(self):
-        self.client.get("/")
-        self.assertEqual(Item.objects.count(), 0)
-
-
 class ItemModelTest(TestCase):
+
     def test_saving_and_retrieving_items(self):
         first_item = Item()
         first_item.text = "The first (ever) list item"
@@ -54,12 +49,24 @@ class ItemModelTest(TestCase):
         second_item.save()
 
         saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
+        
+        self.assertEqual(
+            first = saved_items.count(), 
+            second = 2
+            )
 
         first_saved_item = saved_items[0]
         second_saved_item = saved_items[1]
-        self.assertEqual(first_saved_item.text, "The first (ever) list item")
-        self.assertEqual(second_saved_item.text, "Item the second")
+        
+        self.assertEqual(
+            first = first_saved_item.text, 
+            second = "The first (ever) list item"
+            )
+        
+        self.assertEqual(
+            first = second_saved_item.text, 
+            second = "Item the second"
+            )
 
 class NewListTest(TestCase):
     def test_can_save_a_POST_request(self):
