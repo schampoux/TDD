@@ -20,18 +20,24 @@ class ListViewTest(TestCase):
         # assert
         self.assertTemplateUsed(response, "list.html")
 
-    def test_displays_all_items(self):
+    def test_displays_only_items_for_that_list(self):
         # setup
-        list_ = List.objects.create()
-        Item.objects.create(text="itemey 1", list=list_)
-        Item.objects.create(text="itemey 2", list=list_)
+        correct_list = List.objects.create()
+        Item.objects.create(text="itemey 1", list=correct_list)
+        Item.objects.create(text="itemey 2", list=correct_list)
+
+        other_list = List.objects.create()
+        Item.objects.create(text="other list item 1", list = other_list)
+        Item.objects.create(text="other list item 2", list = other_list)
 
         # exercise
-        response = self.client.get("/lists/the-only-list-in-the-world/")
+        response = self.client.get(f"/lists/{correct_list.id}/")
 
         # assert
         self.assertContains(response, "itemey 1")
         self.assertContains(response, "itemey 2")
+        self.assertNotContains(response, "other list item 1")
+        self.assertNotContains(response, "other list item 2")
 
 class HomePageTest(TestCase):
 
