@@ -125,7 +125,9 @@ class NewListTest(TestCase):
             data = {"item_text": "A new list item"}
             )
         
+        new_list = List.objects.first()
+
         self.assertRedirects(
             response = response, 
-            expected_url = '/lists/the-only-list-in-the-world/'
+            expected_url = f'/lists/{new_list.id}/'
             )
